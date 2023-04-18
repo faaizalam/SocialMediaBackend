@@ -1,0 +1,220 @@
+// for privit account And follower followings
+
+// const mongoose = require('mongoose');
+
+// const userSchema = new mongoose.Schema({
+//   username: {
+//     type: String,
+//     required: true,
+//     unique: true,
+//   },
+//   email: {
+//     type: String,
+//     required: true,
+//     unique: true,
+//   },
+//   password: {
+//     type: String,
+//     required: true,
+//   },
+//   profilePicture: {
+//     type: String,
+//     default: 'default-profile-picture.png',
+//   },
+//   firstName: {
+//     type: String,
+//     required: true,
+//   },
+//   lastName: {
+//     type: String,
+//     required: true,
+//   },
+//   bio: {
+//     type: String,
+//     maxlength: 160,
+//   },
+//   location: {
+//     type: String,
+//   },
+//   website: {
+//     type: String,
+//   },
+//   socialMedia: {
+//     twitter: {
+//       type: String,
+//     },
+//     facebook: {
+//       type: String,
+//     },
+//     instagram: {
+//       type: String,
+//     },
+//   },
+//   followers: [
+//     {
+//       type: mongoose.Schema.Types.ObjectId,
+//       ref: 'User',
+//     },
+//   ],
+//   following: [
+//     {
+//       type: mongoose.Schema.Types.ObjectId,
+//       ref: 'User',
+//     },
+//   ],
+//   posts: [
+//     {
+//       type: mongoose.Schema.Types.ObjectId,
+//       ref: 'Post',
+//     },
+//   ],
+//   notifications: [
+//     {
+//       type: mongoose.Schema.Types.ObjectId,
+//       ref: 'Notification',
+//     },
+//   ],
+//   isPrivate: {
+//     type: Boolean,
+//     default: false,
+//   },
+  
+//    notifications: {
+//       post: {
+//         type: Boolean,
+//         default: true,
+//       },
+//       comment: {
+//         type: Boolean,
+//         default: true,
+//       },
+//       follow: {
+//         type: Boolean,
+//         default: true,
+//       },
+//     },
+//   },
+// }, { timestamps: true });
+
+// const User = mongoose.model('User', userSchema);
+
+// module.exports = User;
+
+
+// Q so how isPrivate will be related to the approved follower can see post and profile
+// Ans)The isPrivate field is used to determine whether a user's profile and posts are private or not. If a user has set isPrivate to true, then only approved followers will be able to see their profile and posts.
+
+// In this case, the followers field would contain the user IDs of those who have been approved to follow the user. When a user tries to view the profile or posts of a private account, the system would first check whether the viewer is an approved follower (i.e., whether their user ID is in the followers array of the account they are trying to view). If they are not an approved follower, they would be redirected to a page indicating that the account is private and can only be viewed by approved followers.
+
+
+
+
+
+// Q so in order to do it by frontend would we have to send http request to the backend to be able to check the viewer is follower of the one whom profile he is willing to see
+
+
+// Ans)Yes, that's correct. In order to check whether the viewer is a follower of the user whose profile they are trying to see, you would need to make an HTTP request from the frontend to the backend.
+
+// You would first need to get the ID of the user whose profile is being viewed, and then send a request to the backend to check if the logged-in user is following that user or not. If they are following that user, then the backend can send back the profile information (including posts) for that user. If they are not following that user and the user has set their profile to private, then the backend can send back an error message indicating that the viewer is not authorized to view the profile.
+
+
+
+
+// Q)that means initailly there will not be any information about the current user but if viewer is following the current user only then the information will be retrieved,but in this case if the user is watching his own profile then what would happen  
+
+// ANS)In the case of the user viewing their own profile, there won't be any need to check whether the viewer is a follower or not. Since the user is the owner of the profile, they should be able to see all their own posts and profile information, regardless of whether they have any followers or not. Therefore, in this case, the server can simply return all the user's posts and profile information without any additional checks.
+
+
+// Q )but the request will be made still isnt ,and in the backend system will check if the request is of user which same as current user so just send all information ,is this how it will be implemented
+
+// ANS) Yes, that's one way to implement it. When a request is made to view a user's profile, the backend system can first check if the requesting user is the same as the user whose profile is being viewed. If they are the same user, then the backend can simply send all the user's information without any restrictions.
+
+// If the requesting user is not the same as the user whose profile is being viewed, then the backend can check if the requesting user is following the user whose profile is being viewed. If they are following, then the backend can send all the user's information without any restrictions. If they are not following, then the backend can check if the user whose profile is being viewed has a private account. If they do have a private account, then the backend can send a message indicating that the user's profile is private and can only be viewed by approved followers. Otherwise, if the user does not have a private account, the backend can send all the user's information without any restrictions.
+
+// This way, the backend can handle different scenarios depending on the relationship between the requesting user and the user whose profile is being viewed.
+
+
+
+
+
+// code for notification
+
+
+
+
+// const mongoose = require('mongoose');
+
+// const notificationSchema = new mongoose.Schema({
+//   recipient: {
+//     type: mongoose.Schema.Types.ObjectId,
+//     ref: 'User',
+//     required: true
+//   },
+//   sender: {
+//     type: mongoose.Schema.Types.ObjectId,
+//     ref: 'User',
+//     required: true
+//   },
+//   type: {
+//     type: String,
+//     enum: ['like', 'comment', 'follow'],
+//     required: true
+//   },
+//   followRequest: {
+//     type: Boolean,
+//     default: false
+//   },
+//   message: {
+//     type: String,
+//     required: true
+//   },
+//   isRead: {
+//     type: Boolean,
+//     default: false
+//   }
+// }, { timestamps: true });
+
+// const Notification = mongoose.model('Notification', notificationSchema);
+
+// module.exports = Notification;
+
+
+
+
+// explanation 
+
+
+// In this version of the schema, the "followRequest" field is a boolean that indicates whether the notification is a follow request (i.e. the sender is requesting to follow the recipient). If "followRequest" is true, you could include additional fields in the Notification schema to track the status of the follow request (e.g. "isAccepted", "isDenied", etc.).
+
+
+
+
+// FAAIZ ALAM
+// how followrequest will become true
+// The followRequest field in the Notification schema will become true if the notification is related to a follow request.
+
+// For example, when a user sends a follow request to another user, a notification can be created to inform the recipient of the request. In this case, the followRequest field in the Notification schema will be set to true, and the sender field will contain the ObjectId of the user who sent the request, while the recipient field will contain the ObjectId of the user who received the request.
+
+// Similarly, when a user accepts or denies a follow request, a notification can be created to inform the sender of the decision. In this case, the followRequest field in the Notification schema will also be set to true, and the recipient field will contain the ObjectId of the user who sent the request, while the sender field will contain the ObjectId of the user who received the decision.
+
+// So the followRequest field becomes true when a notification is related to a follow request, either when a request is sent or when a decision is made on a previous request.
+
+
+
+
+// FAAIZ ALAM
+// and when a receiver  gets the notification of follow request so it gets stored in the notification document and then it shows to the receiver with the sender object or info then receiver when click on accept so it makes http request which fisrt of all push the the user to follower array the generate the notification to the sender of request ?? 
+// Yes, when a user receives a follow request notification, it is stored in the notifications array in their User document. The notification will contain information about the sender, such as their username or profile picture, and a link to the sender's profile.
+
+// When the receiver clicks the "accept" button, a HTTP request is sent to the server to update both the receiver's and the sender's User documents. First, the receiver's User document is updated by adding the sender's ObjectId to their followers array. Then, the sender's User document is updated by adding the receiver's ObjectId to their following array.
+
+// Finally, a new notification is generated to inform the sender that their follow request has been accepted. This notification can be similar to the initial follow request notification, but with a different message or content to reflect the change in status. The notification is then added to the sender's notifications array in their User document.
+
+// It's important to note that the exact implementation of follow requests and notifications can vary depending on the specific requirements and design of the application. The example I provided is just one possible approach.
+
+
+
+
+// FAAIZ ALAM
+// but in most of the cases is it ok to work the way you have told
+// Yes, the approach I described is a common way to handle follow requests and notifications in social media applications. However, it's important to keep in mind that the exact implementation can vary depending on the specific needs of the application.
